@@ -1,5 +1,3 @@
-require 'awesome_print'
-
 def read_board
   rows = []
   return if gets.nil?
@@ -30,26 +28,6 @@ def win?(board)
     end
     return true if w
   end
-
-=begin
-  w = true
-  5.times do |d|
-    if board[d][d] < 1000
-      w = false
-      break
-    end
-  end
-  return true if w
-
-  w = true
-  5.times do |d|
-    if board[d][4 - d] < 1000
-      w = false
-      break
-    end
-  end
-  return true if w
-=end
 
   false
 end
