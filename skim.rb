@@ -190,7 +190,6 @@ class Skim
   end
 
   def rotate_cw
-    raise "not rectangular" unless rectangular?
     other = Skim.new(height, width, sep: sep)
     other.transform! do |_, x, y|
       self[y, height - x - 1]
@@ -198,7 +197,6 @@ class Skim
   end
 
   def rotate_ccw
-    raise "not rectangular" unless rectangular?
     other = Skim.new(height, width, sep: sep)
     other.transform! do |_, x, y|
       self[width - y - 1, x]
