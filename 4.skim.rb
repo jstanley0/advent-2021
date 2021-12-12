@@ -11,8 +11,8 @@ def win?(board)
 end
 
 def mark_number(board, num)
-  board.transform! do |val|
-    val == num ? val + 1000 : val
+  board.each do |val, x, y|
+    board[x, y] += 1000 if val == num
   end
   board.print
 
