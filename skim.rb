@@ -139,6 +139,10 @@ class Skim
     end
   end
 
+  def ==(rhs)
+    data == rhs.data
+  end
+
   def any?
     data.any? { |row| row.any? { |v| yield v } }
   end
@@ -199,6 +203,18 @@ class Skim
     other.transform! do |_, x, y|
       self[width - y - 1, x]
     end
+  end
+
+  def flip_v
+    other = Skim.new(sep: sep)
+    other.data = data.map(&:dup).reverse
+    other
+  end
+
+  def flip_h
+    other = Skim.new(sep: sep)
+    other.data = data.map(&:reverse)
+    other
   end
 
 end
