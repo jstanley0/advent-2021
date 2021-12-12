@@ -1,11 +1,10 @@
-graph = {}
-
-ARGF.each_line do |line|
+graph = ARGF.lines.inject({}) do |h, line|
   a, b = line.chomp.split('-')
-  graph[a] ||= []
-  graph[a] << b unless b == 'start'
-  graph[b] ||= []
-  graph[b] << a unless a == 'start'
+  h[a] ||= []
+  h[a] << b unless b == 'start'
+  h[b] ||= []
+  h[b] << a unless a == 'start'
+  h
 end
 
 def count_paths(graph, from_node = 'start', exclude_nodes = [], mulligan:)
