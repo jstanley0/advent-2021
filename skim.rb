@@ -94,11 +94,11 @@ class Skim
   end
 
   def rows
-    dup.data
+    data.map(&:dup)
   end
 
   def cols
-    rotate_ccw.data.reverse
+    data[0].zip(*data[1..])
   end
 
   def in_bounds?(x, y)
@@ -125,9 +125,7 @@ class Skim
   end
 
   def dup
-    other = Skim.new(sep: sep)
-    other.data = data.map(&:dup)
-    other
+    dup_with_data(rows)
   end
 
   # yield each value with its coordinates
@@ -189,30 +187,26 @@ class Skim
     vals
   end
 
+  private def dup_with_data(data)
+    other = Skim.new(sep: sep)
+    other.data = data
+    other
+  end
+
   def rotate_cw
-    other = Skim.new(height, width, sep: sep)
-    other.transform! do |_, x, y|
-      self[y, height - x - 1]
-    end
+    dup_with_data(cols.map(&:reverse))
   end
 
   def rotate_ccw
-    other = Skim.new(height, width, sep: sep)
-    other.transform! do |_, x, y|
-      self[width - y - 1, x]
-    end
+    dup_with_data(cols.reverse)
   end
 
   def flip_v
-    other = Skim.new(sep: sep)
-    other.data = data.map(&:dup).reverse
-    other
+    dup_with_data(rows.reverse)
   end
 
   def flip_h
-    other = Skim.new(sep: sep)
-    other.data = data.map(&:reverse)
-    other
+    dup_with_data(data.map(&:reverse))
   end
 
 end
