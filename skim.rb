@@ -3,6 +3,8 @@
 
 require 'byebug'
 
+Coord = Struct.new(:x, :y)
+
 class Skim
   # yeah, this isn't very Encapsulated, but I need an escape hatch when time is of the essence
   attr_accessor :data, :sep
@@ -122,6 +124,14 @@ class Skim
 
   def []=(x, y, val)
     data[y][x] = val
+  end
+
+  def get(c)
+    data[c.y][c.x]
+  end
+
+  def set(c, v)
+    data[c.y][c.x] = v
   end
 
   def dup
