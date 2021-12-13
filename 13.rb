@@ -1,6 +1,7 @@
 require 'set'
 require_relative 'skim'
 
+Coord = Struct.new(:x, :y)
 Fold = Struct.new(:axis, :val)
 
 coords = Set.new
@@ -51,7 +52,7 @@ puts "dimensions: #{w} x #{h}"
 
 skim = Skim.new(w, h, sep: ' ')
 coords.each do |c|
-  skim.set c, '#'
+  skim[*c] = '#'
 end
 
 skim.print
