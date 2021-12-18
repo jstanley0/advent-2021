@@ -1,4 +1,4 @@
-require 'byebug'
+require 'json'
 homework = ARGF.lines.map(&:chomp)
 
 def add(l, r)
@@ -7,21 +7,17 @@ def add(l, r)
 end
 
 def find_quad_nest(n)
-  ss = 0
-  while (match = n[ss..].match(/\[\d+,\d+\]/))
-    pos = ss + match.begin(0)
-    nest = 0
-    (0...pos).each do |i|
-      if n[i] == '['
-        nest += 1
-      elsif n[i] == ']'
-        nest -= 1
+  nest = 0
+  (0...n.size).each do |i|
+    if n[i] == '['
+      nest += 1
+      if nest == 5
+        match = n[i..].match(/^\[\d+,\d+\]/)
+        return (i...i + match.end(0)) if match
       end
+    elsif n[i] == ']'
+      nest -= 1
     end
-    if nest >= 4
-      return pos...(ss + match.end(0))
-    end
-    ss += match.end(0)
   end
   nil
 end
@@ -40,7 +36,7 @@ def reduce(n)
   #puts "attempting to reduce #{n}"
   loop do
     if (range = find_quad_nest(n))
-      pair = eval n[range]
+      pair = JSON.parse(n[range])
       raise "eek" unless pair.is_a?(Array) && pair.size == 2
 
       before = n[0...range.first]
@@ -74,7 +70,7 @@ end
 
 def magnitude(thing)
   if thing.is_a?(String)
-    magnitude(eval thing)
+    magnitude(JSON.parse(thing))
   elsif thing.is_a?(Array)
     3 * magnitude(thing[0]) + 2 * magnitude(thing[1])
   else
