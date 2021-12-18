@@ -149,6 +149,14 @@ class Skim
     data.all? { |row| row.all? { |v| yield v } }
   end
 
+  def find_coords(value)
+    data.each_with_index do |row, y|
+      x = row.find_index(value)
+      return x, y if x
+    end
+    nil
+  end
+
   # yield each value+coords and replace with block
   def transform!
     data.each_with_index do |row, y|
