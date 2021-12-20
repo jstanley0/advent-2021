@@ -116,6 +116,14 @@ class Skim
     stream.puts
   end
 
+  def pad(border_size, pad_value)
+    n = Skim.new(width + 2 * border_size, height + 2 * border_size, pad_value, sep: sep)
+    each do |val, x, y|
+      n[x + border_size, y + border_size] = val
+    end
+    n
+  end
+
   def [](x, y)
     data[y][x]
   end
