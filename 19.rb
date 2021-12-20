@@ -40,11 +40,12 @@ scanners = []
 class Scanner
   attr_accessor :num, :coords, :location, :lines
 
-  def initialize(num, coords = [], lines = [], location = Coord.new(0, 0, 0))
+  def initialize(num, coords = [], location = Coord.new(0, 0, 0))
     self.num = num
     self.coords = coords
     self.location = location
-    self.lines = lines
+    self.lines = {}
+    compute_lines if coords.any?
   end
 
   def self.read
@@ -62,7 +63,7 @@ class Scanner
 
   def compute_lines
     coords.combination(2).each do |a, b|
-      lines << a.dist(b)
+      lines[a.dist(b)] = [a, b]
     end
   end
 
@@ -105,15 +106,14 @@ class Scanner
 
   # if successful, returns a new Scanner with coordinates transformed into the reference scanner's system
   # otherwise returns nil
-  def transform(reference)
-    reference.coords.each do |rcoord|
-      rrcoords = reference.coords.map { |c| c - rcoord }
-      each_rotation do |ucoords|
-        ucoords.each do |ucoord|
-          urcoords = ucoords.map { |c| c - ucoord }
-          if (rrcoords & urcoords).size >= 12
-            return Scanner.new(num, urcoords.map { |c| c + rcoord }, lines, rcoord - ucoord)
-          end
+  def transform(reference, common_line_keys)
+    rcoord = reference.lines[common_line_keys.first].first
+    rrcoords = reference.coords.map { |c| c - rcoord }
+    each_rotation do |ucoords|
+      ucoords.each do |ucoord|
+        urcoords = ucoords.map { |c| c - ucoord }
+        if (rrcoords & urcoords).size >= 12
+          return Scanner.new(num, urcoords.map { |c| c + rcoord }, rcoord - ucoord)
         end
       end
     end
@@ -132,7 +132,7 @@ ns = scanners.size
 chart = Skim.new(ns, ns)
 (0...ns).each do |i|
   (0...i).each do |j|
-    chart[i, j] = (scanners[i].lines & scanners[j].lines).size
+    chart[i, j] = (scanners[i].lines.keys & scanners[j].lines.keys).size
   end
 end
 chart.print
@@ -142,9 +142,9 @@ until scanners.empty?
   solved_scanner = nil
   scanners.each do |us|
     solved.each do |ss|
-      common_lines = us.lines & ss.lines
-      if common_lines.size >= 66
-        solved_scanner = us.transform(ss)
+      common_line_keys = us.lines.keys & ss.lines.keys
+      if common_line_keys.size >= 66
+        solved_scanner = us.transform(ss, common_line_keys)
       end
       puts "aligned #{us.num} with #{ss.num}" if solved_scanner
       break if solved_scanner
