@@ -68,6 +68,12 @@ class Skim
     skims
   end
 
+  def self.from_concise_string(str, sep: '/')
+    s = Skim.new
+    s.data = str.split("/").map(&:chars)
+    s
+  end
+
   # width of the given row (if initialized with +rec+ then all rows are the same width)
   def width(row = 0)
     data[row].size
@@ -103,6 +109,20 @@ class Skim
 
   def in_bounds?(x, y)
     x >= 0 && y >= 0 && y < height && x < width(y)
+  end
+
+  def subset(x, y, w, h)
+    sub_data = []
+    data[y...y+h].each do |row|
+      sub_data << row[x...x+w]
+    end
+    dup_with_data(sub_data)
+  end
+
+  def paste(x, y, skim)
+    skim.each do |val, a, b|
+      self[x + a, y + b] = val
+    end
   end
 
   def print(stream = $stdout)
@@ -207,6 +227,14 @@ class Skim
     other = Skim.new(sep: sep)
     other.data = data
     other
+  end
+
+  def match_rotation_of?(other)
+    4.times do
+      return true if other == self
+      other = other.rotate_ccw
+    end
+    false
   end
 
   def rotate_cw
