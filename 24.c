@@ -9,7 +9,7 @@ long long max_z[14] = {8031810176, 8031810176, 8031810176, 8031810176, 308915776
 
 long long stage(int n, int w, long long z)
 {
-  if ((int)(z % 26) + A[n] == w) {
+  if (z % 26 + A[n] == w) {
     return z / B[n];
   } else {
     return 26 * (z / B[n]) + w + C[n];
