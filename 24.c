@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdbool.h>
 
 int A[14] = {12, 13, 13, -2, -10, 13, -14, -5, 15, 15, -14, 10, -14, -5};
 int B[14] = {1, 1, 1, 26, 26, 1, 26, 26, 1, 1, 26, 1, 26, 26};
@@ -16,46 +17,34 @@ long long stage(int n, int w, long long z)
   }
 }
 
-int search(int depth, long long z, char *outbuf)
+bool search(int depth, long long z, char solution[15])
 {
-    if (depth == 14)
-        return (z == 0) ? 1 : 0;
+    if (depth == 14) {
+        if (z == 0) {
+            solution[depth] = '\0';
+            return true;
+        } else return false;
+    }
     else if (z >= max_z[depth])
-        return 0;
+        return false;
 
-    //for(int i = 9; i > 0; --i) {
     for(int i = 1; i <= 9; ++i) {
         int zt = stage(depth, i, z);
-        if (search(depth + 1, zt, outbuf)) {
-            outbuf[depth] = '0' + i;
-            return 1;
+        if (search(depth + 1, zt, solution)) {
+            solution[depth] = '0' + i;
+            return true;
         }
     }
-    return 0;
+    return false;
 }
 
 int main(int argc, char **argv)
 {
-    char outbuf[15];
-    long long z = 0;
-    int depth = 0;
-
-    outbuf[14] = '\0';
-
-    if (argc > 1) {
-        printf("using prefix: ");
-        char *p = argv[1];
-        while(*p > '1' && *p <= '9' && depth < 14) {
-            putchar(*p);
-            outbuf[depth] = *p;
-            int i = *p - '0';
-            z = stage(depth++, i, z);
-            ++p;
-        }
-        putchar('\n');
-    }
-
-    if (search(depth, z, outbuf)) {
-        printf("%s\n", outbuf);
+    char solution[15];
+    if (search(0, 0, solution)) {
+        printf("%s\n", solution);
+        return 0;
+    } else {
+        return 1;
     }
 }
