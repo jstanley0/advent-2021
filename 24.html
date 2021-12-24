@@ -1,0 +1,107 @@
+<html>
+<body>
+
+<table onclick="tableClick(event)" style="text-align: center;">
+    <tr id="a_row"><th>A</th></tr>
+    <tr id="b_row"><th>B</th></tr>
+    <tr id="c_row"><th>C</th></tr>
+    <tr id="up_row"><th></th></tr>
+    <tr id="w_row"><th>W</th></tr>
+    <tr id="down_row"><th></th></tr>
+</table>
+
+<pre id="output"></pre>
+
+<button onclick="shuffle()">I'm feeling lucky</button>
+
+<script>
+
+A = [12n, 13n, 13n, -2n, -10n, 13n, -14n, -5n, 15n, 15n, -14n, 10n, -14n, -5n];
+B = [1n, 1n, 1n, 26n, 26n, 1n, 26n, 26n, 1n, 1n, 26n, 1n, 26n, 26n];
+C = [7n, 8n, 10n, 4n, 4n, 6n, 11n, 13n, 1n, 8n, 4n, 13n, 4n, 14n];
+
+function stage(i, w, z) {
+  if (z % 26n + A[i] === w) {
+    return z / B[i];
+  } else {
+    return (z / B[i]) * 26n + w + C[i];
+  }
+}
+
+function tableClick(event) {
+  if (event.target.nodeName !== "BUTTON")
+    return;
+  const id = event.target.id.split('_');
+
+  const dig_el = document.getElementById(`dig_${id[1]}`);
+  let dig = parseInt(dig_el.textContent);
+  if (id[0] === 'up') {
+    if (++dig > 9)
+      dig = 1;
+  } else {
+    if (--dig < 1)
+      dig = 9;
+  }
+  dig_el.textContent = dig;
+  run();
+}
+
+function textCell(content) {
+  const td = document.createElement('td');
+  td.appendChild(document.createTextNode(content));
+  return td;
+}
+
+function buttonCell(dir, i) {
+  const button = document.createElement('button');
+  button.id = `${dir}_${i}`;
+  button.textContent = (dir === 'up') ? '↑' : '↓';
+  const td = document.createElement('td');
+  td.appendChild(button);
+  return td;
+}
+
+function digitCell(i) {
+  const td = document.createElement('td');
+  td.id = `dig_${i}`;
+  td.textContent = '9';
+  return td;
+}
+
+function initTable() {
+  for(let i = 0; i < 14; ++i) {
+    document.getElementById('a_row').appendChild(textCell(A[i]));
+    document.getElementById('b_row').appendChild(textCell(B[i]));
+    document.getElementById('c_row').appendChild(textCell(C[i]));
+    document.getElementById('up_row').appendChild(buttonCell('up', i));
+    document.getElementById('w_row').appendChild(digitCell(i));
+    document.getElementById('down_row').appendChild(buttonCell('down', i));
+  }
+}
+
+function run() {
+  let output = "";
+  let z = 0n;
+  for(let i = 0; i < 14; ++i) {
+    const w = BigInt(parseInt(document.getElementById(`dig_${i}`).textContent));
+    z = stage(i, w, z);
+    output += `${i}: ${z}\n`
+  }
+  document.getElementById("output").textContent = output;
+}
+
+function shuffle() {
+  for(let i = 0; i < 14; ++i) {
+    document.getElementById(`dig_${i}`).textContent = Math.floor(Math.random() * 10)
+  }
+  run();
+}
+
+initTable();
+run();
+
+</script>
+
+
+</body>
+</html>
