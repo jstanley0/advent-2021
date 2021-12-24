@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdbool.h>
 
 int A[14] = {12, 13, 13, -2, -10, 13, -14, -5, 15, 15, -14, 10, -14, -5};
 int B[14] = {1, 1, 1, 26, 26, 1, 26, 26, 1, 1, 26, 1, 26, 26};
@@ -17,34 +16,26 @@ long long stage(int n, int w, long long z)
   }
 }
 
-bool search(int depth, long long z, char solution[15])
+void search(int depth, long long z, char solution[15])
 {
     if (depth == 14) {
         if (z == 0) {
             solution[depth] = '\0';
-            return true;
-        } else return false;
+            printf("%s\n", solution);
+        }
+        return;
     }
     else if (z >= max_z[depth])
-        return false;
+        return;
 
     for(int i = 1; i <= 9; ++i) {
-        int zt = stage(depth, i, z);
-        if (search(depth + 1, zt, solution)) {
-            solution[depth] = '0' + i;
-            return true;
-        }
+        solution[depth] = '0' + i;
+        search(depth + 1, stage(depth, i, z), solution);
     }
-    return false;
 }
 
 int main(int argc, char **argv)
 {
     char solution[15];
-    if (search(0, 0, solution)) {
-        printf("%s\n", solution);
-        return 0;
-    } else {
-        return 1;
-    }
+    search(0, 0, solution);
 }
