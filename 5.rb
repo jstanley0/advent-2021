@@ -8,10 +8,9 @@ end
 
 #lines.select! { |p| p[0][0] == p[1][0] || p[0][1] == p[1][1] }
 
-points = {}
+points = Hash.new(0)
 
 def plot_point(points, x, y)
-  points[[x, y]] ||= 0
   points[[x, y]] += 1
 end
 

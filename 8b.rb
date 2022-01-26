@@ -67,9 +67,8 @@ def decode_num(digits, num)
 
   wire_map['f'] = (bf - [wire_map['b']])[0]
 
-  freq = {}
+  freq = Hash.new(0)
   digits.join.chars.each do |char|
-    freq[char] ||= 0
     freq[char] += 1
   end
 
