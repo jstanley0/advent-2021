@@ -13,9 +13,8 @@ puts graph.inspect
 def terrible?(path)
   #puts path.inspect
   small_caves = path[1..].select { |cave| cave =~ /\A[a-z]+\z/ }
-  visited_counts = {}
+  visited_counts = Hash.new(0)
   small_caves.each do |cave|
-    visited_counts[cave] ||= 0
     visited_counts[cave] += 1
     return true if visited_counts[cave] > 2
   end

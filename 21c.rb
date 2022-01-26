@@ -24,18 +24,16 @@ player = 0
 
 loop do
   puts "universe count: distinct #{universes.size}, total #{universes.values.sum} (game over in #{universes.keys.count(&:game_over?) * 100 / universes.keys.size}%)"
-  new_universes = {}
+  new_universes = Hash.new(0)
 
   in_play = false
   universes.each do |state, count|
     if state.game_over?
-      new_universes[state] ||= 0
       new_universes[state] += count
     else
       in_play = true
       [1,2,3].repeated_permutation(3) do |dice|
         new_state = state.child(player, dice.sum)
-        new_universes[new_state] ||= 0
         new_universes[new_state] += count
       end
     end
